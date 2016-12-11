@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="cs213.photoalbum.MainActivity">
+    <item
+        android:id="@+id/add_album"
+        android:orderInCategory="100"
+        android:title="@string/add_album"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/delete_album"
+        android:orderInCategory="100"
+        android:title="@string/delete_album"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/rename_album"
+        android:orderInCategory="100"
+        android:title="@string/rename_album"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/new_image"
+        android:orderInCategory="100"
+        android:title="@string/new_image"
+        app:showAsAction="never" />
+
+</menu>

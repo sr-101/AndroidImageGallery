@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">PhotoAlbum</string>
+    <string name="action_settings">Settings</string>
+    <string name="add_album">Add Album</string>
+    <string name="delete_album">Delete Album</string>
+    <string name="edit_album_name">Edit Album Name</string>
+    <string name="rename_album">Rename Album</string>
+    <string name="new_image">New Image</string>
+    <string name="please_enter_an_album_name">Please enter an album name</string>
+</resources>
