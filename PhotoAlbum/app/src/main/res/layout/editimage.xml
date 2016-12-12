@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:text="New Photo"
+        android:text="Edit Photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Material.Display2"
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:inputType="text"
             android:ems="10"
-            android:id="@+id/new_image_name"
+            android:id="@+id/edit_image_name"
             android:hint="@string/please_enter_an_image_name"
             android:layout_weight=".5" />
     </LinearLayout><LinearLayout
@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:inputType="text"
         android:ems="10"
-        android:id="@+id/new_image_tags"
+        android:id="@+id/edit_image_tags"
         android:hint="Please enter image tags"
         android:layout_weight=".25" />
 </LinearLayout>
@@ -63,13 +63,13 @@
         android:layout_gravity="center"
         android:onClick="loadImagefromGallery"
         android:text="Load Picture"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content">
     </Button>
     <Button
         android:text="Submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/addPhotoSubmit"
-        android:onClick="addnewphoto"/>
+        android:id="@+id/editPhotoSubmit"
+        android:onClick="editphoto"/>
 
 </LinearLayout>

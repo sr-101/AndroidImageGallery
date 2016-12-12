@@ -2,26 +2,54 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="cs213.photoalbum.MainActivity">
+    <group android:id="@+id/group_album">
     <item
         android:id="@+id/add_album"
         android:orderInCategory="100"
         android:title="@string/add_album"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:menuCategory="container" />
     <item
         android:id="@+id/delete_album"
         android:orderInCategory="100"
         android:title="@string/delete_album"
         app:showAsAction="never"
-        />
+        android:menuCategory="container" />
     <item
         android:id="@+id/rename_album"
         android:orderInCategory="100"
         android:title="@string/rename_album"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:menuCategory="container" />
+    </group>
+    <group android:id="@+id/group_photo">
     <item
-        android:id="@+id/new_image"
+        android:id="@+id/add_photo"
         android:orderInCategory="100"
-        android:title="@string/new_image"
-        app:showAsAction="never" />
-
+        android:title="@string/add_photo"
+        app:showAsAction="never"
+        android:visible="true"
+        android:menuCategory="container" />
+    <item
+        android:id="@+id/delete_photo"
+        android:orderInCategory="100"
+        android:title="@string/delete_photo"
+        app:showAsAction="never"
+        android:visible="true"
+        android:menuCategory="container" />
+    <item
+        android:id="@+id/edit_photo"
+        android:orderInCategory="100"
+        android:title="@string/edit_photo"
+        app:showAsAction="never"
+        android:visible="true"
+        android:menuCategory="container" />
+    <item
+        android:id="@+id/slideshow"
+        android:orderInCategory="100"
+        android:title="@string/slideshow"
+        app:showAsAction="never"
+        android:visible="true"
+        android:menuCategory="container" />
+    </group>
 </menu>

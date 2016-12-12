@@ -48,4 +48,13 @@ public class Album {
     public void setImages(ArrayList<Image> images) {
         this.images = images;
     }
+
+    @Override
+    public String toString() {
+        return "Album{" +
+                "album_name='" + album_name + '\'' +
+                ", album_cover='" + album_cover + '\'' +
+                ", images=" + images +
+                '}';
+    }
 }

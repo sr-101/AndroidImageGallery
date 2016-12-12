@@ -7,4 +7,11 @@
     <string name="rename_album">Rename Album</string>
     <string name="new_image">New Image</string>
     <string name="please_enter_an_album_name">Please enter an album name</string>
+    <string name="view_photo">View Photo</string>
+    <string name="add_photo">Add Photo</string>
+    <string name="edit_tags">Edit Tags</string>
+    <string name="delete_photo">Delete Photo</string>
+    <string name="slideshow">Slideshow</string>
+    <string name="please_enter_an_image_name">Please enter an image name</string>
+    <string name="edit_photo">Edit Photo</string>
 </resources>
