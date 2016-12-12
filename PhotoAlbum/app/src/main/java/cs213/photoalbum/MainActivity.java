@@ -20,10 +20,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -64,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     int selectedImageIndex;
 
     String temp;
+
+    boolean selectedImage;
 
     int state;
 
@@ -118,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
 
         albumviewupdate();
     }
+
+
 
     public void albumviewupdate(){
         LinearLayout ll= (LinearLayout) findViewById(R.id.albumlist);
@@ -227,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     selectedImageIndex= finalI;
+                    viewphoto();
                 }
             });
             ll.addView(newimage);
@@ -434,6 +442,22 @@ public class MainActivity extends AppCompatActivity {
         newimg.setImage_tags(hm);
 
         gotoImages();
+    }
+
+    public void viewphoto(){
+        setContentView(R.layout.viewphoto);
+        ImageView photo= (ImageView) findViewById(R.id.imgdisplay);
+        TextView tv= (TextView) findViewById(R.id.imgtitle);
+        TextView tv2= (TextView) findViewById(R.id.imgtags);
+        Image newimg=albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex);
+        photo.setImageURI(Uri.parse(newimg.getImage_uri()));
+        tv.setText(newimg.getImage_name());
+        HashMap<String,String> hm=newimg.getImage_tags();
+        String tags=hm.toString().replaceAll("/,\\s*/",",");
+        tags=tags.replaceAll("=",":");
+        tags=tags.substring(1,tags.length()-1);
+        tv2.setText(tags);
+
     }
 
     public static void saveSharedPreferencesLogList(Context context, List<Album> albumlist) {
