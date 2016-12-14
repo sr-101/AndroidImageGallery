@@ -1,26 +1,31 @@
 package cs213.photoalbum;
 
-import java.util.HashMap;
-
 /**
  * Created by deeptisailam on 12/10/16.
  */
 class Image {
-    private HashMap<String,String> image_tags;
+    private String person_tag;
+    private String location_tag;
     private String image_name;
     private String image_uri;
-    private int imageIndex;
-    private int albumIndex;
 
     Image() {
     }
 
-     HashMap<String, String> getImage_tags() {
-        return image_tags;
+    public String getPerson_tag() {
+        return person_tag;
     }
 
-    void setImage_tags(HashMap<String, String> image_tags) {
-        this.image_tags = image_tags;
+    public void setPerson_tag(String person_tag) {
+        this.person_tag = person_tag;
+    }
+
+    public String getLocation_tag() {
+        return location_tag;
+    }
+
+    public void setLocation_tag(String location_tag) {
+        this.location_tag = location_tag;
     }
 
     String getImage_name() {
@@ -39,28 +44,13 @@ class Image {
         this.image_uri = image_uri;
     }
 
-    public int getImageIndex() {
-        return imageIndex;
-    }
-
-    public void setImageIndex(int imageIndex) {
-        this.imageIndex = imageIndex;
-    }
-
-    public int getAlbumIndex() {
-        return albumIndex;
-    }
-
-    public void setAlbumIndex(int albumIndex) {
-        this.albumIndex = albumIndex;
-    }
-
     @Override
     public String toString() {
         return "Image{" +
-                "image_tags=" + image_tags +
+                "person_tag='" + person_tag + '\'' +
+                ", location_tag='" + location_tag + '\'' +
                 ", image_name='" + image_name + '\'' +
-                ", image_uri=" + image_uri +
+                ", image_uri='" + image_uri + '\'' +
                 '}';
     }
 }

@@ -34,7 +34,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
@@ -301,13 +300,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         } else if(id == R.id.edit_photo){
             setContentView(R.layout.editimage);
             EditText et= (EditText) findViewById(R.id.edit_image_name);
-            EditText et2= (EditText) findViewById(R.id.edit_image_tags);
+            EditText et2= (EditText) findViewById(R.id.edit_person_tag);
+            EditText et3= (EditText) findViewById(R.id.edit_location_tag);
             et.setText(albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex).getImage_name());
-            HashMap<String,String> hm=albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex).getImage_tags();
-            String tags=hm.toString().replaceAll("/,\\s*/",",");
-            tags=tags.replaceAll("=",":");
-            tags=tags.substring(1,tags.length()-1);
-            et2.setText(tags);
+            et2.setText(albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex).getPerson_tag());
+            et3.setText(albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex).getLocation_tag());
+
             ImageView imgview= (ImageView) findViewById(R.id.imgView);
             imgview.setImageURI(Uri.parse(albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex).getImage_uri()));
             return true;
@@ -400,30 +398,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         Image newimg=new Image();
         newimg.setImage_uri(temp);
         EditText et= (EditText) findViewById(R.id.new_image_name);
-        EditText et2= (EditText) findViewById(R.id.new_image_tags);
+        EditText et2= (EditText) findViewById(R.id.new_person_tag);
+        EditText et3= (EditText) findViewById(R.id.new_location_tag);
         newimg.setImage_name(et.getText().toString());
-        HashMap<String,String> hm=new HashMap<>();
-        String[] split=et2.getText().toString().split(",");
-        if(!split[0].equalsIgnoreCase("")) {
-            for (String t : split) {
-                String[] keyValue = t.split(":");
-                hm.put(keyValue[0], keyValue[1]);
-            }
-        }
-        newimg.setImage_tags(hm);
+        newimg.setPerson_tag(et2.getText().toString());
+        newimg.setLocation_tag(et3.getText().toString());
 
         albums.get(selectedAlbumIndex).getImages().add(newimg);
-        newimg.setAlbumIndex(selectedAlbumIndex);
-        newimg.setImageIndex(albums.get(selectedAlbumIndex).getImages().size()-1);
-
         gotoImages();
     }
 
     public void deletephoto(){
         albums.get(selectedAlbumIndex).getImages().remove(selectedImageIndex);
-        for(int i=selectedImageIndex+1;i<albums.get(selectedAlbumIndex).getImages().size();i++){
-            albums.get(selectedAlbumIndex).getImages().get(i).setImageIndex(i-1);
-        }
         imageviewupdate(selectedAlbumIndex);
     }
 
@@ -433,33 +419,42 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             newimg.setImage_uri(temp);
         }
         EditText et= (EditText) findViewById(R.id.edit_image_name);
-        EditText et2= (EditText) findViewById(R.id.edit_image_tags);
+        EditText et2= (EditText) findViewById(R.id.edit_person_tag);
+        EditText et3= (EditText) findViewById(R.id.edit_location_tag);
+
         newimg.setImage_name(et.getText().toString());
-        HashMap<String,String> hm=new HashMap<>();
-        String[] split=et2.getText().toString().split(",");
-        for(String t:split){
-            String[] keyValue=t.split(":");
-            hm.put(keyValue[0], keyValue[1]);
-        }
-        newimg.setImage_tags(hm);
+        newimg.setPerson_tag(et2.getText().toString());
+        newimg.setLocation_tag(et3.getText().toString());
 
         gotoImages();
     }
 
     public void viewphoto(){
         setContentView(R.layout.viewphoto);
+
         ImageView photo= (ImageView) findViewById(R.id.imgdisplay);
-        TextView tv= (TextView) findViewById(R.id.imgtitle);
-        TextView tv2= (TextView) findViewById(R.id.imgtags);
+        TextView tv= (TextView) findViewById(R.id.view_image_name);
+        EditText et2= (EditText) findViewById(R.id.view_person_tag);
+        EditText et3= (EditText) findViewById(R.id.view_location_tag);
+
         Image newimg=albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex);
         photo.setImageURI(Uri.parse(newimg.getImage_uri()));
         tv.setText(newimg.getImage_name());
-        HashMap<String,String> hm=newimg.getImage_tags();
-        String tags=hm.toString().replaceAll("/,\\s*/",",");
-        tags=tags.replaceAll("=",":");
-        tags=tags.substring(1,tags.length()-1);
-        tv2.setText(tags);
+        et2.setText(newimg.getPerson_tag());
+        et3.setText(newimg.getLocation_tag());
 
+    }
+
+    public void viewphotosubmit(View v){
+        EditText et2= (EditText) findViewById(R.id.view_person_tag);
+        EditText et3= (EditText) findViewById(R.id.view_location_tag);
+
+        Image newimg=albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex);
+
+        newimg.setPerson_tag(et2.getText().toString());
+        newimg.setLocation_tag(et3.getText().toString());
+
+        gotoImages();
     }
 
     public static void saveSharedPreferencesLogList(Context context, List<Album> albumlist) {

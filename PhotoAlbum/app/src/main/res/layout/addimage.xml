@@ -10,6 +10,16 @@
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Material.Display2"
         android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/buttonLoadPicture"
+        android:layout_width="fill_parent"
+        android:layout_gravity="center"
+        android:onClick="loadImagefromGallery"
+        android:text="Load Picture"
+        android:layout_height="50dp">
+    </Button>
+
     <ImageView
         android:id="@+id/imgView"
         android:layout_width="fill_parent"
@@ -36,13 +46,14 @@
             android:id="@+id/new_image_name"
             android:hint="@string/please_enter_an_image_name"
             android:layout_weight=".5" />
-    </LinearLayout><LinearLayout
+    </LinearLayout>
+    <LinearLayout
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
-        android:text="Image Tags"
+        android:text="@string/person_tag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight=".5"
@@ -53,18 +64,32 @@
         android:layout_height="wrap_content"
         android:inputType="text"
         android:ems="10"
-        android:id="@+id/new_image_tags"
-        android:hint="Please enter image tags"
+        android:id="@+id/new_person_tag"
+        android:hint="@string/please_enter_person_tag"
         android:layout_weight=".25" />
-</LinearLayout>
-    <Button
-        android:id="@+id/buttonLoadPicture"
-        android:layout_width="fill_parent"
-        android:layout_gravity="center"
-        android:onClick="loadImagefromGallery"
-        android:text="Load Picture"
-        android:layout_height="50dp">
-    </Button>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/location_tag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:ems="10"
+            android:id="@+id/new_location_tag"
+            android:hint="@string/please_enter_location_tag"
+            android:layout_weight=".25" />
+    </LinearLayout>
+
     <Button
         android:text="Submit"
         android:layout_width="match_parent"

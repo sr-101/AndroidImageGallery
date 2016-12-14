@@ -2,25 +2,101 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
-    <ImageView
-        android:id="@+id/imgdisplay"
-        android:layout_width="fill_parent"
-        android:layout_weight="1"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    </ImageView>
-    <TextView
-        android:text="Image Name"
-        android:id="@+id/imgtitle"
+
+        <ImageButton
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_media_rew"
+            android:id="@+id/imageButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical" />
+
+        <ImageView
+            android:id="@+id/imgdisplay"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+        </ImageView>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_media_ff"
+            android:id="@+id/imageButton3"
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Image Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+        <TextView
+            android:text="Image Name"
+            android:id="@+id/view_image_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/person_tag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:ems="10"
+            android:id="@+id/view_person_tag"
+            android:hint="@string/please_enter_person_tag"
+            android:layout_weight=".25" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/location_tag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:ems="10"
+            android:id="@+id/view_location_tag"
+            android:hint="@string/please_enter_location_tag"
+            android:layout_weight=".25" />
+    </LinearLayout>
+    <Button
+        android:text="@string/save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textAppearance="@android:style/TextAppearance.Material.Large" />
-    <TextView
-        android:text="Image Tags"
-        android:id="@+id/imgtags"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight=".5"
-        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+        android:id="@+id/editPhotoSubmit"
+        android:onClick="viewphotosubmit"/>
 </LinearLayout>

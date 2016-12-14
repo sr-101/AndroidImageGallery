@@ -2,7 +2,6 @@ package cs213.photoalbum;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,13 +57,6 @@ class ListViewAdapter extends BaseAdapter{
             // Locate the TextViews in listview_item.xml
             holder.name = (TextView) view.findViewById(R.id.name);
             holder.image= (ImageView) view.findViewById(R.id.searchedimage);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Snackbar.make(v, holder.name.getText()+" clicked", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            });
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();

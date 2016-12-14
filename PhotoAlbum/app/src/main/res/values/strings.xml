@@ -16,4 +16,11 @@
     <string name="edit_photo">Edit Photo</string>
     <string name="image">Image:</string>
     <string name="search_photos">Search Photos</string>
+    <string name="location_tag">Location Tag</string>
+    <string name="please_enter_location_tag">Please enter location tag</string>
+    <string name="please_enter_person_tag">Please enter person tag</string>
+    <string name="person_tag">Person Tag</string>
+    <string name="image_tags">Image Tags</string>
+    <string name="image_name">Image Name</string>
+    <string name="save">Save</string>
 </resources>
