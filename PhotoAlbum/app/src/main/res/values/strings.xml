@@ -23,4 +23,6 @@
     <string name="image_tags">Image Tags</string>
     <string name="image_name">Image Name</string>
     <string name="save">Save</string>
+    <string name="location">Location:</string>
+    <string name="person">Person:</string>
 </resources>

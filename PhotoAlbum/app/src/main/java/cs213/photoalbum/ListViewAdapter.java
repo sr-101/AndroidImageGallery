@@ -30,7 +30,8 @@ class ListViewAdapter extends BaseAdapter{
     }
 
     private class ViewHolder {
-        TextView name;
+        TextView person;
+        TextView location;
         ImageView image;
     }
 
@@ -55,14 +56,16 @@ class ListViewAdapter extends BaseAdapter{
             holder = new ViewHolder();
             view = inflater.inflate(R.layout.listview_item, null);
             // Locate the TextViews in listview_item.xml
-            holder.name = (TextView) view.findViewById(R.id.name);
+            holder.person = (TextView) view.findViewById(R.id.person_tag);
+            holder.location = (TextView) view.findViewById(R.id.location_tag);
             holder.image= (ImageView) view.findViewById(R.id.searchedimage);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
         }
         // Set the results into TextViews
-        holder.name.setText(ImageList.get(position).getImage_name());
+        holder.person.setText(ImageList.get(position).getPerson_tag());
+        holder.location.setText(ImageList.get(position).getLocation_tag());
         holder.image.setImageURI(Uri.parse(ImageList.get(position).getImage_uri()));
         return view;
     }
@@ -75,7 +78,8 @@ class ListViewAdapter extends BaseAdapter{
             ImageList.addAll(arraylist);
         } else {
             for (Image wp : arraylist) {
-                if (wp.getImage_name().toLowerCase(Locale.getDefault()).contains(charText)) {
+                if ((wp.getPerson_tag()!=null && (wp.getPerson_tag().toLowerCase(Locale.getDefault()).contains(charText)))||
+                        (wp.getLocation_tag()!=null && (wp.getLocation_tag().toLowerCase(Locale.getDefault()).contains(charText)))) {
                     ImageList.add(wp);
                 }
             }
