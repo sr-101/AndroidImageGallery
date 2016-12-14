@@ -14,4 +14,6 @@
     <string name="slideshow">Slideshow</string>
     <string name="please_enter_an_image_name">Please enter an image name</string>
     <string name="edit_photo">Edit Photo</string>
+    <string name="image">Image:</string>
+    <string name="search_photos">Search Photos</string>
 </resources>

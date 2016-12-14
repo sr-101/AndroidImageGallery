@@ -8,55 +8,36 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     ArrayList<Album> albums=new ArrayList<Album>();
 
@@ -68,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
 
     String temp;
 
-    boolean selectedImage;
-
     int state;
 
     ViewGroup.LayoutParams txtlp;
@@ -77,6 +56,11 @@ public class MainActivity extends AppCompatActivity {
     ViewGroup.LayoutParams imglp;
 
     LinearLayout.LayoutParams ll2lp;
+
+    ListView list;
+    ListViewAdapter adapter;
+    SearchView editsearch;
+    ArrayList<Image> allimages=new ArrayList<>();
 
     // Storage Permissions
     static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -88,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Checks if the app has permission to write to device storage
      *
-     * If the app does not has permission then the user will be prompted to grant permissions
+     * If the app does not have permission then the user will be prompted to grant permissions
      *
      * @param activity
      */
@@ -112,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         verifyStoragePermissions(this);
         //PreferenceManager.getDefaultSharedPreferences(this).edit().clear().commit();
         albums= loadSharedPreferencesLogList(this);
+        updateallimages();
         setContentView(R.layout.activity_main);
         state=R.id.group_album;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -124,7 +109,12 @@ public class MainActivity extends AppCompatActivity {
         albumviewupdate();
     }
 
-
+    public void updateallimages(){
+        allimages.clear();
+        for(Album a:albums){
+            allimages.addAll(a.getImages());
+        }
+    }
 
     public void albumviewupdate(){
         LinearLayout ll= (LinearLayout) findViewById(R.id.albumlist);
@@ -174,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
             });
             ll.addView(newalbum);
         }
+        updateallimages();
     }
 
     @Override
@@ -239,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
             });
             ll.addView(newimage);
         }
+        updateallimages();
     }
 
     public void gotoImages(){
@@ -319,6 +311,9 @@ public class MainActivity extends AppCompatActivity {
             ImageView imgview= (ImageView) findViewById(R.id.imgView);
             imgview.setImageURI(Uri.parse(albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex).getImage_uri()));
             return true;
+        }
+        else if(id == R.id.search_photos){
+            searchview();
         }
 
         return super.onOptionsItemSelected(item);
@@ -409,19 +404,26 @@ public class MainActivity extends AppCompatActivity {
         newimg.setImage_name(et.getText().toString());
         HashMap<String,String> hm=new HashMap<>();
         String[] split=et2.getText().toString().split(",");
-        for(String t:split){
-            String[] keyValue=t.split(":");
-            hm.put(keyValue[0], keyValue[1]);
+        if(!split[0].equalsIgnoreCase("")) {
+            for (String t : split) {
+                String[] keyValue = t.split(":");
+                hm.put(keyValue[0], keyValue[1]);
+            }
         }
         newimg.setImage_tags(hm);
 
         albums.get(selectedAlbumIndex).getImages().add(newimg);
+        newimg.setAlbumIndex(selectedAlbumIndex);
+        newimg.setImageIndex(albums.get(selectedAlbumIndex).getImages().size()-1);
 
         gotoImages();
     }
 
     public void deletephoto(){
         albums.get(selectedAlbumIndex).getImages().remove(selectedImageIndex);
+        for(int i=selectedImageIndex+1;i<albums.get(selectedAlbumIndex).getImages().size();i++){
+            albums.get(selectedAlbumIndex).getImages().get(i).setImageIndex(i-1);
+        }
         imageviewupdate(selectedAlbumIndex);
     }
 
@@ -469,7 +471,7 @@ public class MainActivity extends AppCompatActivity {
         prefsEditor.commit();
     }
     public static ArrayList<Album> loadSharedPreferencesLogList(Context context) {
-        ArrayList<Album> albumlist = new ArrayList<Album>();
+        ArrayList<Album> albumlist;
         SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         Gson gson = new Gson();
         String json = mPrefs.getString("myJson", "");
@@ -481,6 +483,44 @@ public class MainActivity extends AppCompatActivity {
             albumlist = gson.fromJson(json, type);
         }
         return albumlist;
+    }
+
+    public void searchview(){
+        setContentView(R.layout.searchview);
+        list = (ListView) findViewById(R.id.search_results);
+        adapter = new ListViewAdapter(this, allimages);
+        list.setAdapter(adapter);
+        editsearch = (SearchView) findViewById(R.id.search_view);
+        editsearch.setOnQueryTextListener(this);
+    }
+
+    /**
+     * Called when the user submits the query. This could be due to a key press on the
+     * keyboard or due to pressing a submit button.
+     * The listener can override the standard behavior by returning true
+     * to indicate that it has handled the submit request. Otherwise return false to
+     * let the SearchView handle the submission by launching any associated intent.
+     *
+     * @param query the query text that is to be submitted
+     * @return true if the query has been handled by the listener, false to let the
+     * SearchView perform the default action.
+     */
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    /**
+     * Called when the query text is changed by the user.
+     *
+     * @param newText the new content of the query text field.
+     * @return false if the SearchView should perform the default action of showing any
+     * suggestions if available, true if the action was handled by the listener.
+     */
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        adapter.filter(newText);
+        return false;
     }
 }
 

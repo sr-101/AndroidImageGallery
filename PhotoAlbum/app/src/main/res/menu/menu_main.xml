@@ -51,5 +51,12 @@
         app:showAsAction="never"
         android:visible="true"
         android:menuCategory="container" />
+    <item
+        android:id="@+id/search_photos"
+        android:orderInCategory="100"
+        android:title="@string/search_photos"
+        app:showAsAction="never"
+        android:visible="true"
+        android:menuCategory="container" />
     </group>
 </menu>
