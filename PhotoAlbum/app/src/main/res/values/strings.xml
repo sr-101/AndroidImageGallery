@@ -25,4 +25,5 @@
     <string name="save">Save</string>
     <string name="location">Location:</string>
     <string name="person">Person:</string>
+    <string name="move_photo">Move Photo</string>
 </resources>

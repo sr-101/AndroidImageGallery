@@ -2,8 +2,10 @@ package cs213.photoalbum;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -30,6 +32,10 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -37,9 +43,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.sql.Types.NULL;
+
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
-    ArrayList<Album> albums=new ArrayList<Album>();
+    ArrayList<Album> albums = new ArrayList<Album>();
 
     Menu menu;
 
@@ -60,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     ListView list;
     ListViewAdapter adapter;
     SearchView editsearch;
-    ArrayList<Image> allimages=new ArrayList<>();
+    ArrayList<Image> allimages = new ArrayList<>();
 
     // Storage Permissions
     static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -68,10 +76,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     /**
      * Checks if the app has permission to write to device storage
-     *
+     * <p>
      * If the app does not have permission then the user will be prompted to grant permissions
      *
      * @param activity
@@ -95,41 +108,44 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         super.onCreate(savedInstanceState);
         verifyStoragePermissions(this);
         //PreferenceManager.getDefaultSharedPreferences(this).edit().clear().commit();
-        albums= loadSharedPreferencesLogList(this);
+        albums = loadSharedPreferencesLogList(this);
         updateallimages();
         setContentView(R.layout.activity_main);
-        state=R.id.group_album;
+        state = R.id.group_album;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        txtlp=findViewById(R.id.textView).getLayoutParams();
-        imglp=findViewById(R.id.imageView).getLayoutParams();
-        ll2lp= (LinearLayout.LayoutParams) findViewById(R.id.albumrow).getLayoutParams();
+        txtlp = findViewById(R.id.textView).getLayoutParams();
+        imglp = findViewById(R.id.imageView).getLayoutParams();
+        ll2lp = (LinearLayout.LayoutParams) findViewById(R.id.albumrow).getLayoutParams();
 
         albumviewupdate();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
-    public void updateallimages(){
+    public void updateallimages() {
         allimages.clear();
-        for(Album a:albums){
+        for (Album a : albums) {
             allimages.addAll(a.getImages());
         }
     }
 
-    public void albumviewupdate(){
-        LinearLayout ll= (LinearLayout) findViewById(R.id.albumlist);
+    public void albumviewupdate() {
+        LinearLayout ll = (LinearLayout) findViewById(R.id.albumlist);
 
         ll.removeAllViewsInLayout();
 
-        for(int i=0;i<albums.size();i++){
-            final LinearLayout newalbum=new LinearLayout(this);
+        for (int i = 0; i < albums.size(); i++) {
+            final LinearLayout newalbum = new LinearLayout(this);
             newalbum.setLayoutParams(ll2lp);
-            ImageView img=new ImageView(this);
+            ImageView img = new ImageView(this);
             img.setLayoutParams(imglp);
             img.setImageResource(R.drawable.srk);
             img.setTag("Image");
 
-            TextView title=new TextView(this);
+            TextView title = new TextView(this);
             title.setLayoutParams(txtlp);
             title.setText(albums.get(i).getAlbum_name());
             title.setTag("Title");
@@ -144,9 +160,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     Snackbar.make(view, "New Album clicked", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     TextView titleview = (TextView) newalbum.findViewWithTag("Title");
-                    Snackbar.make(view, "Selected Album: "+titleview.getText().toString(), Snackbar.LENGTH_LONG)
+                    Snackbar.make(view, "Selected Album: " + titleview.getText().toString(), Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                    selectedAlbumIndex= finalI;
+                    selectedAlbumIndex = finalI;
                     return true;
                 }
             });
@@ -156,9 +172,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     Snackbar.make(view, "New Album clicked", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     TextView titleview = (TextView) newalbum.findViewWithTag("Title");
-                    Snackbar.make(view, "Selected Album: "+titleview.getText().toString(), Snackbar.LENGTH_LONG)
+                    Snackbar.make(view, "Selected Album: " + titleview.getText().toString(), Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                    selectedAlbumIndex= finalI;
+                    selectedAlbumIndex = finalI;
                     gotoImages();
                 }
             });
@@ -169,11 +185,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     protected void onDestroy() {
-        saveSharedPreferencesLogList(this,albums);
+        saveSharedPreferencesLogList(this, albums);
         super.onDestroy();
     }
 
-    public void imageviewupdate(int album_index){
+    public void imageviewupdate(int album_index) {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -186,21 +202,21 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 gotoAlbums();
             }
         });
-        LinearLayout ll= (LinearLayout) findViewById(R.id.imagelist);
+        LinearLayout ll = (LinearLayout) findViewById(R.id.imagelist);
 
         ll.removeAllViewsInLayout();
 
         ArrayList<Image> images = albums.get(album_index).getImages();
 
-        for(int i=0;i<images.size();i++){
-            final LinearLayout newimage=new LinearLayout(this);
+        for (int i = 0; i < images.size(); i++) {
+            final LinearLayout newimage = new LinearLayout(this);
             newimage.setLayoutParams(ll2lp);
-            ImageView img=new ImageView(this);
+            ImageView img = new ImageView(this);
             img.setLayoutParams(imglp);
             img.setImageURI(Uri.parse(images.get(i).getImage_uri()));
             img.setTag("Image");
 
-            TextView title=new TextView(this);
+            TextView title = new TextView(this);
             title.setLayoutParams(txtlp);
             title.setText(images.get(i).getImage_name());
             title.setTag("Title");
@@ -215,16 +231,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     Snackbar.make(view, "Image clicked", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     TextView titleview = (TextView) newimage.findViewWithTag("Title");
-                    Snackbar.make(view, "Selected Image: "+titleview.getText().toString(), Snackbar.LENGTH_LONG)
+                    Snackbar.make(view, "Selected Image: " + titleview.getText().toString(), Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                    selectedImageIndex= finalI;
+                    selectedImageIndex = finalI;
                     return true;
                 }
             });
             newimage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    selectedImageIndex= finalI;
+                    selectedImageIndex = finalI;
                     viewphoto();
                 }
             });
@@ -233,9 +249,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         updateallimages();
     }
 
-    public void gotoImages(){
+    public void gotoImages() {
         setContentView(R.layout.photoview);
-        state=R.id.group_photo;
+        state = R.id.group_photo;
         //Populate
         imageviewupdate(selectedAlbumIndex);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab2);
@@ -251,14 +267,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(state==R.id.group_album) {
+        if (state == R.id.group_album) {
             // Inflate the menu; this adds items to the action bar if it is present.
             getMenuInflater().inflate(R.menu.menu_main, menu);
             menu.setGroupVisible(R.id.group_album, true);
             menu.setGroupVisible(R.id.group_photo, false);
             this.menu = menu;
-        }
-        else if(state==R.id.group_photo){
+        } else if (state == R.id.group_photo) {
             // Inflate the menu; this adds items to the action bar if it is present.
             getMenuInflater().inflate(R.menu.menu_main, menu);
             menu.setGroupVisible(R.id.group_album, false);
@@ -280,46 +295,43 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (id == R.id.add_album) {
             setContentView(R.layout.addalbum);
             return true;
-        }
-        else if (id == R.id.delete_album) {
+        } else if (id == R.id.delete_album) {
             deletealbum();
             return true;
-        }
-        else if (id == R.id.rename_album) {
+        } else if (id == R.id.rename_album) {
             setContentView(R.layout.renamealbum);
-            EditText et= (EditText) findViewById(R.id.rename_album_name);
+            EditText et = (EditText) findViewById(R.id.rename_album_name);
             et.setText(albums.get(selectedAlbumIndex).getAlbum_name());
             return true;
-        }
-        else if (id == R.id.add_photo) {
+        } else if (id == R.id.add_photo) {
             setContentView(R.layout.addimage);
             return true;
-        }
-        else if(id == R.id.delete_photo){
+        } else if (id == R.id.delete_photo) {
             deletephoto();
             return true;
-        } else if(id == R.id.edit_photo){
+        } else if (id == R.id.edit_photo) {
             setContentView(R.layout.editimage);
-            EditText et= (EditText) findViewById(R.id.edit_image_name);
-            EditText et2= (EditText) findViewById(R.id.edit_person_tag);
-            EditText et3= (EditText) findViewById(R.id.edit_location_tag);
+            EditText et = (EditText) findViewById(R.id.edit_image_name);
+            EditText et2 = (EditText) findViewById(R.id.edit_person_tag);
+            EditText et3 = (EditText) findViewById(R.id.edit_location_tag);
             et.setText(albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex).getImage_name());
             et2.setText(albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex).getPerson_tag());
             et3.setText(albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex).getLocation_tag());
 
-            ImageView imgview= (ImageView) findViewById(R.id.imgView);
+            ImageView imgview = (ImageView) findViewById(R.id.imgView);
             imgview.setImageURI(Uri.parse(albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex).getImage_uri()));
             return true;
-        }
-        else if(id == R.id.search_photos){
+        } else if (id == R.id.move_photo) {
+            movePhoto();
+        } else if (id == R.id.search_photos) {
             searchview();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void gotoAlbums(){
-        state=R.id.group_album;
+    public void gotoAlbums() {
+        state = R.id.group_album;
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -327,19 +339,49 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         albumviewupdate();
     }
 
-    public void addnewalbum(View v){
-        EditText et= (EditText) findViewById(R.id.new_album_name);
-        albums.add(new Album(et.getText().toString(),"",new ArrayList<Image>()));
+    public void movePhoto() {
+        CharSequence[] list = new CharSequence[albums.size()];
+
+        final int[] newAlbum = {0};
+
+        for(int i=0; i<albums.size(); i++){
+            list[i]=albums.get(i).getAlbum_name();
+        }
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select album to move image to:");
+        builder.setItems(list, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                // Do something with the selection
+                newAlbum[0]=item;
+                Image newimg=new Image();
+                newimg=albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex);
+                albums.get(newAlbum[0]).getImages().add(newimg);
+                albums.get(selectedAlbumIndex).getImages().remove(selectedImageIndex);
+
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+
+    }
+
+
+    public void addnewalbum(View v) {
+        EditText et = (EditText) findViewById(R.id.new_album_name);
+        albums.add(new Album(et.getText().toString(), "", new ArrayList<Image>()));
         gotoAlbums();
     }
 
-    public void deletealbum(){
+    public void deletealbum() {
         albums.remove(selectedAlbumIndex);
         albumviewupdate();
     }
 
-    public void renamealbum(View v){
-        EditText et= (EditText) findViewById(R.id.rename_album_name);
+    public void renamealbum(View v) {
+        EditText et = (EditText) findViewById(R.id.rename_album_name);
         albums.get(selectedAlbumIndex).setAlbum_name(et.getText().toString());
         gotoAlbums();
     }
@@ -350,7 +392,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void loadImagefromGallery(View view) {
         // Create intent to Open Image applications like Gallery, Google Photos
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         // Start the Intent
         startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
     }
@@ -367,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                 ImageView imgView = (ImageView) findViewById(R.id.imgView);
                 imgView.setImageURI(Uri.parse(getRealPathFromURI(selectedImage)));
-                temp=getRealPathFromURI(selectedImage);
+                temp = getRealPathFromURI(selectedImage);
             } else {
                 Toast.makeText(this, "You haven't picked Image",
                         Toast.LENGTH_LONG).show();
@@ -379,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     public String getRealPathFromURI(Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
+        String[] proj = {MediaStore.Images.Media.DATA};
 
         //This method was deprecated in API level 11
         //Cursor cursor = managedQuery(contentUri, proj, null, null, null);
@@ -395,12 +437,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return cursor.getString(column_index);
     }
 
-    public void addnewphoto(View view){
-        Image newimg=new Image();
+    public void addnewphoto(View view) {
+        Image newimg = new Image();
         newimg.setImage_uri(temp);
-        EditText et= (EditText) findViewById(R.id.new_image_name);
-        EditText et2= (EditText) findViewById(R.id.new_person_tag);
-        EditText et3= (EditText) findViewById(R.id.new_location_tag);
+        EditText et = (EditText) findViewById(R.id.new_image_name);
+        EditText et2 = (EditText) findViewById(R.id.new_person_tag);
+        EditText et3 = (EditText) findViewById(R.id.new_location_tag);
         newimg.setImage_name(et.getText().toString());
         newimg.setPerson_tag(et2.getText().toString());
         newimg.setLocation_tag(et3.getText().toString());
@@ -409,19 +451,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         gotoImages();
     }
 
-    public void deletephoto(){
+    public void deletephoto() {
         albums.get(selectedAlbumIndex).getImages().remove(selectedImageIndex);
         imageviewupdate(selectedAlbumIndex);
     }
 
-    public void editphoto(View v){
-        Image newimg=albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex);
-        if(temp!=null) {
+    public void editphoto(View v) {
+        Image newimg = albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex);
+        if (temp != null) {
             newimg.setImage_uri(temp);
         }
-        EditText et= (EditText) findViewById(R.id.edit_image_name);
-        EditText et2= (EditText) findViewById(R.id.edit_person_tag);
-        EditText et3= (EditText) findViewById(R.id.edit_location_tag);
+        EditText et = (EditText) findViewById(R.id.edit_image_name);
+        EditText et2 = (EditText) findViewById(R.id.edit_person_tag);
+        EditText et3 = (EditText) findViewById(R.id.edit_location_tag);
 
         newimg.setImage_name(et.getText().toString());
         newimg.setPerson_tag(et2.getText().toString());
@@ -430,16 +472,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         gotoImages();
     }
 
-    public void viewphoto(){
+    public void viewphoto() {
         setContentView(R.layout.viewphoto);
 
-        final ImageView photo= (ImageView) findViewById(R.id.imgdisplay);
-        TextView tv= (TextView) findViewById(R.id.view_image_name);
-        EditText et2= (EditText) findViewById(R.id.view_person_tag);
-        EditText et3= (EditText) findViewById(R.id.view_location_tag);
+        final ImageView photo = (ImageView) findViewById(R.id.imgdisplay);
+        TextView tv = (TextView) findViewById(R.id.view_image_name);
+        EditText et2 = (EditText) findViewById(R.id.view_person_tag);
+        EditText et3 = (EditText) findViewById(R.id.view_location_tag);
 
 
-        Image newimg=albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex);
+        Image newimg = albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex);
         photo.setImageURI(Uri.parse(newimg.getImage_uri()));
         tv.setText(newimg.getImage_name());
         et2.setText(newimg.getPerson_tag());
@@ -448,21 +490,21 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         final int[] imageCount = {selectedImageIndex};
         ImageButton next = (ImageButton) findViewById(R.id.next);
         ImageButton back = (ImageButton) findViewById(R.id.back);
-        if(imageCount[0] ==albums.get(selectedAlbumIndex).getImages().size()-1){
+        if (imageCount[0] == albums.get(selectedAlbumIndex).getImages().size() - 1) {
             next.setEnabled(false);
         } else {
             next.setEnabled(true);
         }
-        if(imageCount[0] ==0){
+        if (imageCount[0] == 0) {
             back.setEnabled(false);
-        }else {
+        } else {
             back.setEnabled(true);
         }
 
         back.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 imageCount[0]--;
-                selectedImageIndex=imageCount[0];
+                selectedImageIndex = imageCount[0];
                 viewphoto();
             }
         });
@@ -470,7 +512,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         next.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 imageCount[0]++;
-                selectedImageIndex=imageCount[0];
+                selectedImageIndex = imageCount[0];
                 viewphoto();
             }
         });
@@ -478,12 +520,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
 
+    public void viewphotosubmit(View v) {
+        EditText et2 = (EditText) findViewById(R.id.view_person_tag);
+        EditText et3 = (EditText) findViewById(R.id.view_location_tag);
 
-    public void viewphotosubmit(View v){
-        EditText et2= (EditText) findViewById(R.id.view_person_tag);
-        EditText et3= (EditText) findViewById(R.id.view_location_tag);
-
-        Image newimg=albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex);
+        Image newimg = albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex);
 
         newimg.setPerson_tag(et2.getText().toString());
         newimg.setLocation_tag(et3.getText().toString());
@@ -499,6 +540,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         prefsEditor.putString("myJson", json);
         prefsEditor.commit();
     }
+
     public static ArrayList<Album> loadSharedPreferencesLogList(Context context) {
         ArrayList<Album> albumlist;
         SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -514,7 +556,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return albumlist;
     }
 
-    public void searchview(){
+    public void searchview() {
         setContentView(R.layout.searchview);
         list = (ListView) findViewById(R.id.search_results);
         adapter = new ListViewAdapter(this, allimages);
@@ -550,6 +592,42 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onQueryTextChange(String newText) {
         adapter.filter(newText);
         return false;
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Main Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 }
 
