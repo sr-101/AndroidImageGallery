@@ -12,7 +12,7 @@
         <ImageButton
             android:layout_height="wrap_content"
             app:srcCompat="@android:drawable/ic_media_rew"
-            android:id="@+id/imageButton"
+            android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical" />
 
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@android:drawable/ic_media_ff"
-            android:id="@+id/imageButton3"
+            android:id="@+id/next"
             android:layout_gravity="center_vertical" />
     </LinearLayout>
     <LinearLayout

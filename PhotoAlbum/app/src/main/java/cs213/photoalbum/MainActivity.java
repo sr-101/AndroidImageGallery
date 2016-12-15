@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -432,10 +433,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void viewphoto(){
         setContentView(R.layout.viewphoto);
 
-        ImageView photo= (ImageView) findViewById(R.id.imgdisplay);
+        final ImageView photo= (ImageView) findViewById(R.id.imgdisplay);
         TextView tv= (TextView) findViewById(R.id.view_image_name);
         EditText et2= (EditText) findViewById(R.id.view_person_tag);
         EditText et3= (EditText) findViewById(R.id.view_location_tag);
+
 
         Image newimg=albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex);
         photo.setImageURI(Uri.parse(newimg.getImage_uri()));
@@ -443,7 +445,39 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         et2.setText(newimg.getPerson_tag());
         et3.setText(newimg.getLocation_tag());
 
+        final int[] imageCount = {selectedImageIndex};
+        ImageButton next = (ImageButton) findViewById(R.id.next);
+        ImageButton back = (ImageButton) findViewById(R.id.back);
+        if(imageCount[0] ==albums.get(selectedAlbumIndex).getImages().size()-1){
+            next.setEnabled(false);
+        } else {
+            next.setEnabled(true);
+        }
+        if(imageCount[0] ==0){
+            back.setEnabled(false);
+        }else {
+            back.setEnabled(true);
+        }
+
+        back.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                imageCount[0]--;
+                selectedImageIndex=imageCount[0];
+                viewphoto();
+            }
+        });
+
+        next.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                imageCount[0]++;
+                selectedImageIndex=imageCount[0];
+                viewphoto();
+            }
+        });
+
     }
+
+
 
     public void viewphotosubmit(View v){
         EditText et2= (EditText) findViewById(R.id.view_person_tag);
