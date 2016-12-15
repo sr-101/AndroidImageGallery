@@ -359,6 +359,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 newimg=albums.get(selectedAlbumIndex).getImages().get(selectedImageIndex);
                 albums.get(newAlbum[0]).getImages().add(newimg);
                 albums.get(selectedAlbumIndex).getImages().remove(selectedImageIndex);
+                gotoImages();
 
             }
         });
