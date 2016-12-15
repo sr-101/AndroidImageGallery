@@ -294,6 +294,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         //noinspection SimplifiableIfStatement
         if (id == R.id.add_album) {
             setContentView(R.layout.addalbum);
+
             return true;
         } else if (id == R.id.delete_album) {
             deletealbum();
@@ -305,6 +306,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             return true;
         } else if (id == R.id.add_photo) {
             setContentView(R.layout.addimage);
+
             return true;
         } else if (id == R.id.delete_photo) {
             deletephoto();
@@ -369,10 +371,37 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     }
 
+    public void goToAlbums(View v){
+        state = R.id.group_album;
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        albumviewupdate();
+    }
+
+    public void goToOpenAlbum(View v){
+        setContentView(R.layout.photoview);
+        state = R.id.group_photo;
+        //Populate
+        imageviewupdate(selectedAlbumIndex);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab2);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Going to Albums", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                gotoAlbums();
+            }
+        });
+    }
+
 
     public void addnewalbum(View v) {
         EditText et = (EditText) findViewById(R.id.new_album_name);
         albums.add(new Album(et.getText().toString(), "", new ArrayList<Image>()));
+
+
         gotoAlbums();
     }
 
